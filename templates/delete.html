@@ -1,0 +1,15 @@
+{%  extends 'base.html' %}
+
+{% block content %}
+
+<div class="alert alert-danger" role="alert">
+    Deleting order {{ order }}
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <a href="{% url 'dashboard' %}">Cancel</a>
+        <input type="submit" name="Confirm">
+    </form>
+</div>
+
+{% endblock %}

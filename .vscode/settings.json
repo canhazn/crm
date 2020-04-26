@@ -1,0 +1,6 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.pylintPath": "/home/anhtd/dev/crm/venv/bin/pylint",
+    "python.linting.pylintArgs": ["--errors-only", "--load-plugins", "pylint_django"]
+}

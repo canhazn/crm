@@ -10,6 +10,8 @@ def home(request):
     products = Product.objects.all()    
     return render(request, 'index.html', {'products': products})
     # return HttpResponse("home page")
+def register(request):
+    return render(request, 'register.html')
 
 def dashboard(request):
     orders = Order.objects.all()
@@ -32,16 +34,17 @@ def customer(request, id):
     orders = customer.order_set.all()
     total_order = orders.count()
 
-    myFilter = OrderFilter()
+    myFilter = OrderFilter(request.GET, queryset=orders)
+    orders = myFilter.qs
+
+    # if request.method == 'GET':
 
     context = {  'myFilter': myFilter, 'customer': customer, 'orders': orders, 'total_order': total_order }
     return render(request, 'customer.html', context)
 
 def createOrder(request):
     form = OrderForm()
-    print("form hi")
-    if request.method == 'POST':
-        print("Printing POST: ", request.POST)
+    if request.method == 'POST':    
         form = OrderForm(request.POST)
         if form.is_valid():
             form.save()

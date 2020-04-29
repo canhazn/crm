@@ -9,46 +9,19 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .decorators import unauthenticated_user, allowed_users
 
-def home(request):
-    products = Product.objects.all()    
-    return render(request, 'index.html', {'products': products})
-    # return HttpResponse("home page")
 
-def register(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-    form  = CreateUserForm()
-    if request.method == "POST":
-        form = CreateUserForm(request.POST)
-        if form.is_valid:
-            user = form.cleaned_data.get('username')
-            messages.success(request, 'Created ' + user)
-            form.save()
-
-    context = { 'form': form }
-    return render(request, 'register.html', context)
-
-def loginPage(request):
-    if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        # print(username, password)
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return redirect('/')
-        else: 
-            messages.info(request, 'User or pass is not correct')
-    context = {}
-    return render(request, 'login.html', context)
-
-def logoutUser(request):
-    logout(request)
-    return redirect('login')
+def home(request):    
+    return redirect('dashboard')
 
 @login_required(login_url='login')
+def products(request):
+    products = Product.objects.all()    
+    return render(request, 'index.html', {'products': products})
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def dashboard(request):
     orders = Order.objects.all()
     customers = Customer.objects.all()
@@ -110,3 +83,45 @@ def deleteOrder(request, id):
         order.delete()
         return redirect('/dashboard')
     return render(request, 'delete.html', context)
+
+@unauthenticated_user
+def register(request):
+    form  = CreateUserForm()
+    if request.method == "POST":
+        form = CreateUserForm(request.POST)
+        if form.is_valid:
+            user = form.cleaned_data.get('username')
+            messages.success(request, 'Created ' + user)
+            form.save()
+
+    context = { 'form': form }
+    return render(request, 'register.html', context)
+
+@unauthenticated_user
+def loginPage(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        # print(username, password)
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else: 
+            messages.info(request, 'User or pass is not correct')
+    context = {}
+    return render(request, 'login.html', context)
+
+def logoutUser(request):
+    logout(request)
+    return redirect('login')
+
+import json
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
+def userPage(request):
+    userId = str(request.user.customer.id)
+    print(userId)
+    return redirect('/customer/' + userId)

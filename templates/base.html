@@ -29,9 +29,9 @@
     <!-- Navigation -->
     <nav class="top-nav navbar navbar-expand-lg shadow" >
         <div class="container">
-            <a class="navbar-brand text-black font-italic font-weight-bolder" href="/">crm</a>
             <a class="navbar-brand text-black font-italic font-weight-bolder" href="{% url 'dashboard' %}">Dashboard</a>            
-            <a class="navbar-brand text-black font-italic font-weight-bolder" href="{% url 'dashboard' %}">Hello, {{ request.user }}</a>            
+            <a class="navbar-brand text-black font-italic font-weight-bolder" href="{% url 'products' %}">Products</a>
+            <a class="navbar-brand text-black font-italic font-weight-bolder" href="{% url 'user' %}">Hello, {{ request.user }}</a>            
             <a class="navbar-brand text-black font-italic font-weight-bolder" href="{% url 'logout' %}">Logout</a>            
             
         </div>
